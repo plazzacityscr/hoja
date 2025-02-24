@@ -330,11 +330,26 @@ class Router
      *
      * @param string $pattern The route pattern/path to match
      * @param string $view The view to render
+     * @param array $data The data to pass to the view
      */
-    public static function view(string $pattern, string $view)
+    public static function view(string $pattern, string $view, $data = [])
     {
-        static::get($pattern, function () use ($view) {
-            return response()->view($view);
+        static::get($pattern, function () use ($view, $data) {
+            return response()->view($view, $data);
+        });
+    }
+
+    /**
+     * Add a route that renders an inertia view
+     * 
+     * @param string $pattern The route pattern/path to match
+     * @param string $view The view to render
+     * @param array $data The data to pass to the view
+     */
+    public static function inertia(string $pattern, string $view, $data = [])
+    {
+        static::get($pattern, function () use ($view, $data) {
+            return inertia($view, $data);
         });
     }
 
