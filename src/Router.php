@@ -341,7 +341,7 @@ class Router
 
     /**
      * Add a route that renders an inertia view
-     * 
+     *
      * @param string $pattern The route pattern/path to match
      * @param string $view The view to render
      * @param array $data The data to pass to the view
