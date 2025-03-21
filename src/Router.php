@@ -788,9 +788,7 @@ class Router
 
                 $handledRoutes[] = $routeData;
 
-                if ($returnFirst) {
-                    return [$routeData];
-                }
+                if ($returnFirst) break;
             }
         }
 
