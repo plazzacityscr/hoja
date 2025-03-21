@@ -749,44 +749,37 @@ class Router
         $uri = $uri ?? static::getCurrentUri();
         $routes = $routes ?? static::$routes[\Leaf\Http\Request::getMethod()];
 
+        // Preserve existing $_GET parameters
+        $existingQueryParams = $_GET;
+
+        // Extract query string and remove it from URI
+        $parsedUrl = parse_url($uri);
+        $uriPath = $parsedUrl['path'] ?? '/';
+        parse_str($parsedUrl['query'] ?? '', $queryParams);
+
         foreach ($routes as $route) {
-            // Replace all curly braces matches {} into word patterns (like Laravel)
-            $route['pattern'] = preg_replace('/\/{(.*?)}/', '/(.*?)', $route['pattern']);
+            // Match named parameters in the pattern
+            preg_match_all('/{(\w+)}/', $route['pattern'], $paramNames);
+            $paramNames = $paramNames[1] ?? [];
 
-            // we have a match!
-            if (preg_match_all('#^' . $route['pattern'] . '$#', $uri, $matches, PREG_OFFSET_CAPTURE)) {
-                // Rework matches to only contain the matches, not the orig string
-                $matches = array_slice($matches, 1);
+            // Replace all curly braces {} with regex capture groups
+            $pattern = preg_replace('/\/{(.*?)}/', '/([^\/]+)', $route['pattern']);
 
-                // Extract the matched URL parameters (and only the parameters)
-                $params = array_map(function ($match, $index) use ($matches) {
-                    // We have a following parameter: take the substring from the current param position until the next one's position (thank you PREG_OFFSET_CAPTURE)
-                    if (isset($matches[$index + 1]) && isset($matches[$index + 1][0]) && $matches[$index + 1][0][1] != -1 && is_array($matches[$index + 1][0])) {
-                        return trim(substr($match[0][0], 0, $matches[$index + 1][0][1] - $match[0][1]), '/');
-                    }
+            // Match current URI against the route pattern
+            if (preg_match('#^' . $pattern . '$#', $uriPath, $matches)) {
+                array_shift($matches); // Remove full match
 
-                    // Temporary fix for optional parameters
-                    if (($match[0][1] ?? 1) === -1 && ($match[0][0] ?? null) === '') {
-                        return;
-                    }
-
-                    // We have no following parameters: return the whole lot
-                    return isset($match[0][0]) ? trim($match[0][0], '/') : null;
-                }, $matches, array_keys($matches));
-
-                $paramsWithSlash = array_filter($params, function ($param) {
-                    if (!$param) {
-                        return false;
-                    }
-
-                    return strpos($param, '/') !== false;
-                });
-
-                // if any of the params contain /, we should skip this route
-                if (!empty($paramsWithSlash)) {
-                    continue;
+                // Extract parameter values
+                $params = [];
+                foreach ($matches as $index => $value) {
+                    $paramName = $paramNames[$index] ?? "var" . ($index + 1);
+                    $params[$paramName] = trim($value, '/');
                 }
 
+                // Merge extracted route parameters with existing query parameters
+                $_GET = array_merge($existingQueryParams, $params);
+
+                // Return matched route info
                 $routeData = [
                     'params' => $params,
                     'handler' => $route['handler'],
@@ -796,7 +789,7 @@ class Router
                 $handledRoutes[] = $routeData;
 
                 if ($returnFirst) {
-                    break;
+                    return [$routeData];
                 }
             }
         }
