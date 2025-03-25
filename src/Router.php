@@ -772,7 +772,7 @@ class Router
                 // Extract parameter values
                 $params = [];
                 foreach ($matches as $index => $value) {
-                    $paramName = $paramNames[$index] ?? "var" . ($index + 1);
+                    $paramName = $paramNames[$index] ?? 'var' . ($index + 1);
                     $params[$paramName] = trim($value, '/');
                 }
 
@@ -788,7 +788,9 @@ class Router
 
                 $handledRoutes[] = $routeData;
 
-                if ($returnFirst) break;
+                if ($returnFirst) {
+                    break;
+                }
             }
         }
 
