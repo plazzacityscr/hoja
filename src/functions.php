@@ -61,3 +61,30 @@ if (!function_exists('_env')) {
         return $value;
     }
 }
+
+if (!function_exists('make')) {
+    /**
+     * Cache and use a class
+     *
+     * @template T of object
+     * @param class-string<T>|T $service
+     * @return T
+     */
+    function make($service)
+    {
+        if (is_string($service)) {
+            $serviceName = $service;
+            $service = (new $service);
+        } else {
+            $serviceName = get_class($service);
+        }
+
+        if (!\Leaf\Config::getStatic("classes.$serviceName")) {
+            \Leaf\Config::singleton("classes.$serviceName", function () use ($service) {
+                return $service;
+            });
+        }
+
+        return \Leaf\Config::get("classes.$serviceName");
+    }
+}
