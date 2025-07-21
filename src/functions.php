@@ -74,7 +74,7 @@ if (!function_exists('make')) {
     {
         if (is_string($service)) {
             $serviceName = $service;
-            $service = (new $service);
+            $service = (new $service());
         } else {
             $serviceName = get_class($service);
         }
