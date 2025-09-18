@@ -88,3 +88,22 @@ if (!function_exists('make')) {
         return \Leaf\Config::get("classes.$serviceName");
     }
 }
+
+if (!function_exists('rescue')) {
+    /**
+     * Run the given callback and return its result. If an exception occurs, report it and return the default value.
+     *
+     * @template T
+     * @param  callable  $callback
+     * @param  mixed  $default
+     * @return T|mixed
+     */
+    function rescue(callable $callback, $default = null)
+    {
+        try {
+            return $callback();
+        } catch (Throwable $e) {
+            return $default instanceof Closure ? $default($e) : $default;
+        }
+    }
+}
