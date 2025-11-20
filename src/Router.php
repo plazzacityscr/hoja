@@ -183,6 +183,7 @@ class Router
                 'pattern' => $pattern,
                 'handler' => $handler,
                 'name' => $routeOptions['name'] ?? '',
+                'lingo.no_locale_prefix' => $routeOptions['lingo.no_locale_prefix'] ?? false,
             ];
 
             if ($routeOptions['middleware'] || !empty(static::$routeGroupMiddleware)) {
@@ -625,7 +626,12 @@ class Router
      */
     private static function callHook(string $name)
     {
-        return is_callable(static::$hooks[$name]) ? static::$hooks[$name]() : null;
+        if (is_callable(static::$hooks[$name])) {
+            $context = static::$hooks[$name](['routes' => static::$routes]);
+            static::$routes = $context['routes'] ?? static::$routes;
+        }
+
+        return $context ?? null;
     }
 
     /**
