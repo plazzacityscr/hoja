@@ -183,6 +183,7 @@ class Router
                 'pattern' => $pattern,
                 'handler' => $handler,
                 'name' => $routeOptions['name'] ?? '',
+                'lingo.routes' => $routeOptions['lingo.routes'] ?? [],
                 'lingo.no_locale_prefix' => $routeOptions['lingo.no_locale_prefix'] ?? false,
             ];
 
