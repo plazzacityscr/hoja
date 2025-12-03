@@ -29,10 +29,10 @@ class Router
      * 'Middleware' to run at specific times
      */
     protected static $hooks = [
-        'router.before' => false,
-        'router.before.route' => false,
-        'router.after.route' => false,
-        'router.after' => false,
+        'router.before' => [],
+        'router.before.route' => [],
+        'router.after.route' => [],
+        'router.after' => [],
     ];
 
     /**
@@ -617,7 +617,7 @@ class Router
             trigger_error("$name is not a valid hook! Refer to the docs for all supported hooks");
         }
 
-        static::$hooks[$name] = $handler;
+        static::$hooks[$name][] = $handler;
     }
 
     /**
@@ -627,12 +627,19 @@ class Router
      */
     private static function callHook(string $name)
     {
-        if (is_callable(static::$hooks[$name])) {
-            $context = static::$hooks[$name](['routes' => static::$routes]);
-            static::$routes = $context['routes'] ?? static::$routes;
+        if (\count(static::$hooks[$name]) === 0) {
+            return;
         }
 
-        return $context ?? null;
+        foreach (static::$hooks[$name] as $hook) {
+            if (is_callable($hook)) {
+                $context = $hook(['routes' => static::$routes]);
+
+                if ($context) {
+                    static::$routes = $context['routes'] ?? static::$routes;
+                }
+            }
+        }
     }
 
     /**
