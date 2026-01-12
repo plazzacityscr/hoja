@@ -70,7 +70,7 @@ class Router
      */
     protected static $lingoOptions = [
         'lingo.no_locale_prefix' => false,
-        'lingo.routes' => []
+        'lingo.routes' => [],
     ];
 
     /**
