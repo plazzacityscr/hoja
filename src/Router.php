@@ -66,6 +66,14 @@ class Router
     protected static $routeGroupMiddleware = [];
 
     /**
+     * Lingo options
+     */
+    protected static $lingoOptions = [
+        'lingo.no_locale_prefix' => false,
+        'lingo.routes' => []
+    ];
+
+    /**
      * Current group base path
      */
     protected static $groupRoute = '';
@@ -118,6 +126,7 @@ class Router
 
         $initialNamespace = static::$namespace;
         $initialGroupRoute = static::$groupRoute;
+        $initialLingoOptioins = static::$lingoOptions;
         $initialGroupMiddleware = static::$routeGroupMiddleware;
 
         if ($groupOptions['namespace']) {
@@ -130,10 +139,19 @@ class Router
             static::$routeGroupMiddleware = $groupOptions['middleware'];
         }
 
+        if (isset($groupOptions['lingo.routes'])) {
+            static::$lingoOptions['lingo.routes'] = $groupOptions['lingo.routes'];
+        }
+
+        if (isset($groupOptions['lingo.no_locale_prefix'])) {
+            static::$lingoOptions['lingo.no_locale_prefix'] = $groupOptions['lingo.no_locale_prefix'];
+        }
+
         call_user_func($handler);
 
         static::$namespace = $initialNamespace;
         static::$groupRoute = $initialGroupRoute;
+        static::$lingoOptions = $initialLingoOptioins;
         static::$routeGroupMiddleware = $initialGroupMiddleware;
     }
 
@@ -183,8 +201,8 @@ class Router
                 'pattern' => $pattern,
                 'handler' => $handler,
                 'name' => $routeOptions['name'] ?? '',
-                'lingo.routes' => $routeOptions['lingo.routes'] ?? [],
-                'lingo.no_locale_prefix' => $routeOptions['lingo.no_locale_prefix'] ?? false,
+                'lingo.routes' => $routeOptions['lingo.routes'] ?? static::$lingoOptions['lingo.routes'] ?? [],
+                'lingo.no_locale_prefix' => $routeOptions['lingo.no_locale_prefix'] ?? static::$lingoOptions['lingo.no_locale_prefix'] ?? false,
             ];
 
             if ($routeOptions['middleware'] || !empty(static::$routeGroupMiddleware)) {
