@@ -856,7 +856,7 @@ class Router
         $requestedMethod = \Leaf\Http\Request::getMethod();
         $appDown = _env('APP_DOWN', \Leaf\Anchor::toBool(\Leaf\Config::getStatic('app.down')) ?? false);
 
-        if ($appDown === true) {
+        if ($appDown == true) {
             if (!static::$downHandler) {
                 static::$downHandler = function () {
                     \Leaf\Exception\General::defaultDown();
