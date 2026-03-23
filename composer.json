@@ -34,13 +34,23 @@
         "php": "^7.4|^8.0",
         "leafs/http": "*",
         "leafs/anchor": "*",
-        "leafs/exception": "*"
+        "leafs/exception": "*",
+        "leafs/db": "^4.0"
     },
     "scripts": {
         "test": "./vendor/bin/alchemy setup --test",
         "alchemy": "./vendor/bin/alchemy setup",
         "lint": "./vendor/bin/alchemy setup --lint",
-        "actions": "./vendor/bin/alchemy setup --actions"
+        "actions": "./vendor/bin/alchemy setup --actions",
+        "db:migrate": "php db.php migrate",
+        "db:seed": "php db.php seed",
+        "db:fresh": "php db.php fresh:seed",
+        "serve": "php -S localhost:8000 -t public",
+        "setup": [
+            "cp .env.example .env",
+            "php db.php migrate",
+            "php db.php seed"
+        ]
     },
     "config": {
         "allow-plugins": {
