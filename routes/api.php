@@ -8,7 +8,7 @@ declare(strict_types=1);
  * Register your API routes here
  */
 
-use App\Controllers\UserController;
+use App\Models\User;
 
 // API versioning prefix
 app()->group('/api/v1', function () {
@@ -40,29 +40,116 @@ app()->group('/api/v1', function () {
         ]);
     });
 
-    // User resources (CRUD) - using closures to call controller methods
+    // User resources (CRUD) - Direct implementation
     app()->get('/users', function () {
-        $controller = new UserController();
-        $controller->index();
+        try {
+            $user = new User();
+            $users = $user->all();
+            response()->json([
+                'success' => true,
+                'data' => $users,
+                'count' => count($users),
+            ]);
+        } catch (Exception $e) {
+            response()->json([
+                'success' => false,
+                'error' => 'Database not configured. Run: php db.php migrate',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
     });
     
     app()->get('/users/{id}', function ($id) {
-        $controller = new UserController();
-        $controller->show($id);
+        try {
+            $user = new User();
+            $userData = $user->find((int)$id);
+            
+            if (!$userData) {
+                response()->json([
+                    'success' => false,
+                    'error' => 'User not found',
+                ], 404);
+                return;
+            }
+            
+            response()->json([
+                'success' => true,
+                'data' => $userData,
+            ]);
+        } catch (Exception $e) {
+            response()->json([
+                'success' => false,
+                'error' => 'Database not configured',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
     });
     
     app()->post('/users', function () {
-        $controller = new UserController();
-        $controller->store();
+        try {
+            $user = new User();
+            $data = request()->json()->all();
+            
+            // Validation
+            if (empty($data['name']) || empty($data['email']) || empty($data['password'])) {
+                response()->json([
+                    'success' => false,
+                    'error' => 'Name, email and password are required',
+                ], 400);
+                return;
+            }
+            
+            $userId = $user->create($data);
+            
+            response()->json([
+                'success' => true,
+                'message' => 'User created successfully',
+                'data' => ['id' => $userId],
+            ], 201);
+        } catch (Exception $e) {
+            response()->json([
+                'success' => false,
+                'error' => 'Database not configured',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
     });
     
     app()->put('/users/{id}', function ($id) {
-        $controller = new UserController();
-        $controller->update($id);
+        try {
+            $user = new User();
+            $data = request()->json()->all();
+            
+            $user->update((int)$id, $data);
+            
+            response()->json([
+                'success' => true,
+                'message' => 'User updated successfully',
+            ]);
+        } catch (Exception $e) {
+            response()->json([
+                'success' => false,
+                'error' => 'Database not configured',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
     });
     
     app()->delete('/users/{id}', function ($id) {
-        $controller = new UserController();
-        $controller->destroy($id);
+        try {
+            $user = new User();
+            $user->delete((int)$id);
+            
+            response()->json([
+                'success' => true,
+                'message' => 'User deleted successfully',
+            ]);
+        } catch (Exception $e) {
+            response()->json([
+                'success' => false,
+                'error' => 'Database not configured',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
     });
 });

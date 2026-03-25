@@ -22,7 +22,9 @@
     ],
     "autoload": {
         "psr-4": {
-            "Leaf\\": "src"
+            "Leaf\\": "src",
+            "App\\": "app",
+            "Database\\": "database"
         },
         "files": [
             "src/functions.php"

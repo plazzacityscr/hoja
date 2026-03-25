@@ -28,8 +28,8 @@ class User
      */
     public function all(): array
     {
-        $users = $this->db->query("SELECT * FROM {$this->table} ORDER BY created_at DESC");
-        return $this->hideFields($users);
+        $result = $this->db->query("SELECT * FROM {$this->table} ORDER BY created_at DESC");
+        return $this->hideFields($result ?: []);
     }
 
     /**
@@ -54,7 +54,7 @@ class User
             "SELECT * FROM {$this->table} WHERE email = ?",
             [$email]
         );
-        
+
         return isset($user[0]) ? $this->hideFields([$user[0]])[0] : null;
     }
 
@@ -64,7 +64,7 @@ class User
     public function create(array $data): int
     {
         $this->db->query(
-            "INSERT INTO {$this->table} (name, email, password, created_at) 
+            "INSERT INTO {$this->table} (name, email, password, created_at)
              VALUES (?, ?, ?, ?)",
             [
                 $data['name'],
