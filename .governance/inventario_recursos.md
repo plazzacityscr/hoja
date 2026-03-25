@@ -141,9 +141,16 @@
 | Archivo | Estado | Propósito |
 |---------|--------|-----------|
 | `db.php` | ✅ Existe | CLI para migraciones |
-| `database/migrations/*` | ✅ 3 migraciones | Users, password_reset_tokens, sessions |
+| `database/migrations/*` | ✅ 5 migraciones | Users, password_reset_tokens, sessions, projects, analysis_results |
 | `database/seeders/*` | ✅ Seeders incluidos | UserSeeder |
 | `DATABASE.md` | ✅ Existe | Documentación de BD |
+
+**Migraciones disponibles**:
+1. `2024_01_01_000001_create_users_table.php` - Tabla de usuarios
+2. `2024_01_01_000002_create_password_reset_tokens_table.php` - Tokens de recuperación
+3. `2024_01_01_000003_create_sessions_table.php` - Sesiones
+4. `2024_01_01_000004_create_projects_table.php` - Proyectos de inmuebles
+5. `2024_01_01_000005_create_analysis_results_table.php` - Resultados de análisis
 
 **Fuente**: `DATABASE.md`, `SETUP_COMPLETE.md`, `PROJECT_README.md`
 
@@ -152,12 +159,38 @@
 | Archivo | Estado | Propósito |
 |---------|--------|-----------|
 | `app/Models/User.php` | ✅ Existe | Modelo de usuario |
+| `app/Models/Project.php` | ✅ Existe | Modelo de proyectos de inmuebles |
+| `app/Models/AnalysisResult.php` | ✅ Existe | Modelo de resultados de análisis |
 | `app/Controllers/HomeController.php` | ✅ Existe | Controlador home |
 | `app/Controllers/UserController.php` | ✅ Existe | CRUD de usuarios |
 | `app/Middleware/AuthMiddleware.php` | ✅ Existe | Autenticación |
 | `app/Middleware/ExampleMiddleware.php` | ✅ Existe | Ejemplo |
 
 **Fuente**: `SETUP_COMPLETE.md`, `PROJECT_README.md`
+
+### File Storage (Almacenamiento)
+
+| Archivo | Estado | Propósito |
+|---------|--------|-----------|
+| `src/FileStorage/ReportStorage.php` | ✅ Existe | Gestión de informes de análisis (JSON/Markdown) |
+| `src/FileStorage/FileUpload.php` | ✅ Existe | Gestión de subida de archivos |
+| `storage/reports/` | ✅ Existe | Directorio para informes de análisis |
+| `storage/uploads/` | ✅ Existe | Directorio para archivos subidos |
+
+**Fuente**: Implementación FASE 1 - Data Fetching & File System
+
+### Helpers de Sistema
+
+| Helper | Estado | Propósito |
+|--------|--------|-----------|
+| `db()` | ✅ Existe | Obtener instancia de conexión a BD |
+| `database_path()` | ✅ Existe | Obtener ruta de directorio database |
+| `storage_path()` | ✅ Existe | Obtener ruta de directorio storage |
+| `config()` | ✅ Existe | Obtener valor de configuración |
+| `migrate()` | ✅ Existe | Ejecutar migraciones |
+| `seed()` | ✅ Existe | Ejecutar seeders |
+
+**Fuente**: `src/Database/Helpers.php`
 
 ### Vistas
 
@@ -286,6 +319,7 @@
 
 | Fecha | Cambio | Archivo |
 |------|---------|---------|
+| 2026-03-25 | **Implementación Data Fetching & File System**: Añadidos modelos Project y AnalysisResult, migraciones 4 y 5, helpers storage_path(), clases ReportStorage y FileUpload | `inventario_recursos.md` |
 | 2026-03-25 | Actualización de Sección 0: ID del proyecto Railway (e24d5972-55a9-4e19-99ed-87fc91461ecd), URL del proyecto, IDs de servicios web (60af6f83-c5ad-423c-9229-75dc384ee93e) y Postgres (1caf13f3-23f7-4c79-a389-c7fef044bbef), corrección del Dockerfile | `inventario_recursos.md` |
 | 2026-03-25 | Actualización de Sección 3: Variables específicas del servicio web y base de datos PostgreSQL, DATABASE_URL actualizado | `inventario_recursos.md` |
 | 2026-03-25 | Actualización de Sección 4: APP_KEY (9545ab5785aa44807a1c331ae4e9ad39c8c4927d7a0cef36d634db9fbdbbf02d), DATABASE_URL y PGPASSWORD (haxbXBzzJgcOfOhxyZLMbbzCJjeoMdYN) | `inventario_recursos.md` |

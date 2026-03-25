@@ -40,6 +40,20 @@ if (!function_exists('database_path')) {
     }
 }
 
+if (!function_exists('storage_path')) {
+    /**
+     * Get the storage path
+     *
+     * @param string $path
+     * @return string
+     */
+    function storage_path(string $path = ''): string
+    {
+        $base = __DIR__ . '/../storage';
+        return $path ? $base . '/' . $path : $base;
+    }
+}
+
 if (!function_exists('config')) {
     /**
      * Get configuration value
