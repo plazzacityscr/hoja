@@ -8,18 +8,14 @@ declare(strict_types=1);
  * Register your web routes here
  */
 
-// Home page
-app()->get('/', function () {
-    response()->json([
-        'message' => 'Welcome to Leaf PHP',
-        'version' => '3.0',
-        'documentation' => 'https://leafphp.dev',
-    ]);
-});
+use App\Controllers\HomeController;
 
-// View example
+// Home page - Gentelella Dashboard
+app()->get('/', [HomeController::class, 'showView']);
+
+// Legacy view example
 app()->get('/view', function () {
-    response()->view('index', [
+    response()->view('index.view', [
         'title' => 'Home - Leaf PHP',
     ]);
 });
@@ -31,5 +27,14 @@ app()->get('/api/info', function () {
         'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'PHP Built-in Server',
         'app_environment' => _env('APP_ENV', 'development'),
         'app_debug' => _env('APP_DEBUG', false),
+    ]);
+});
+
+// Blade test route
+app()->get('/test-blade', function () {
+    return view('test', [
+        'title' => 'Prueba de Blade',
+        'message' => 'Blade está funcionando correctamente',
+        'date' => date('Y-m-d H:i:s'),
     ]);
 });

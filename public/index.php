@@ -16,6 +16,11 @@ if (file_exists(__DIR__ . '/../src/Database/Helpers.php')) {
     require __DIR__ . '/../src/Database/Helpers.php';
 }
 
+// Load general functions
+if (file_exists(__DIR__ . '/../src/functions.php')) {
+    require __DIR__ . '/../src/functions.php';
+}
+
 // Load configuration helpers
 $configDir = __DIR__ . '/../config';
 if (is_dir($configDir)) {
@@ -52,6 +57,86 @@ app()->config([
     'views.path' => __DIR__ . '/../views',
     'views.cachePath' => _env('CACHE_PATH', __DIR__ . '/../cache'),
 ]);
+
+// ===========================================
+// Configure Session Handler
+// ===========================================
+$sessionConfig = app()->config('session');
+if ($sessionConfig && is_array($sessionConfig)) {
+    $sessionDriver = $sessionConfig['driver'] ?? 'file';
+    $sessionLifetime = $sessionConfig['lifetime'] ?? 120;
+    $sessionName = $sessionConfig['name'] ?? 'leaf_session';
+    $sessionPath = $sessionConfig['path'] ?? '/tmp/sessions';
+    $cookieConfig = $sessionConfig['cookie'] ?? [];
+
+    // Configurar parámetros de sesión
+    ini_set('session.gc_maxlifetime', $sessionLifetime * 60);
+    ini_set('session.cookie_lifetime', $sessionLifetime * 60);
+    ini_set('session.name', $sessionName);
+
+    // Configurar cookie de sesión
+    $cookieParams = [
+        'lifetime' => $sessionLifetime * 60,
+        'path' => '/',
+        'domain' => '',
+        'secure' => $cookieConfig['secure'] ?? true,
+        'httponly' => $cookieConfig['http_only'] ?? true,
+        'samesite' => $cookieConfig['same_site'] ?? 'lax',
+    ];
+    session_set_cookie_params($cookieParams);
+
+    // Configurar handler de Redis si está disponible
+    if ($sessionDriver === 'redis' && extension_loaded('redis')) {
+        $redisUrl = _env('REDIS_URL');
+        if ($redisUrl) {
+            $parsed = parse_url($redisUrl);
+            $redisHost = $parsed['host'] ?? '127.0.0.1';
+            $redisPort = $parsed['port'] ?? 6379;
+            $redisPassword = $parsed['pass'] ?? null;
+            $redisDatabase = isset($parsed['path']) ? (int) ltrim($parsed['path'], '/') : 0;
+
+            $redis = new Redis();
+            $connected = $redis->connect($redisHost, $redisPort, 5);
+
+            if ($connected) {
+                if ($redisPassword) {
+                    $redis->auth($redisPassword);
+                }
+                if ($redisDatabase > 0) {
+                    $redis->select($redisDatabase);
+                }
+
+                // Configurar Redis como handler de sesión
+                ini_set('session.save_handler', 'redis');
+                ini_set('session.save_path', "tcp://$redisHost:$redisPort?database=$redisDatabase" . ($redisPassword ? '&auth=' . rawurlencode($redisPassword) : ''));
+
+                $redis->close();
+            } else {
+                // Fallback a file si Redis no está disponible
+                ini_set('session.save_handler', 'files');
+                ini_set('session.save_path', $sessionPath);
+            }
+        } else {
+            // Fallback a file si no hay REDIS_URL
+            ini_set('session.save_handler', 'files');
+            ini_set('session.save_path', $sessionPath);
+        }
+    } else {
+        // Usar handler de archivos por defecto
+        ini_set('session.save_handler', 'files');
+        ini_set('session.save_path', $sessionPath);
+    }
+}
+
+// Initialize Blade view engine
+$viewConfig = app()->config('view');
+if ($viewConfig && is_array($viewConfig)) {
+    $blade = new \Leaf\Blade(
+        $viewConfig['views_path'] ?? __DIR__ . '/../views',
+        $viewConfig['cache_path'] ?? __DIR__ . '/../storage/cache/views'
+    );
+    app()->blade($blade);
+}
 
 // Set custom error handler for production
 if (_env('APP_ENV', 'development') === 'production' && !_env('APP_DEBUG', false)) {
@@ -91,6 +176,40 @@ app()->set404(function () {
         'path' => request()->getRequestUri(),
     ], 404);
 });
+
+// ===========================================
+// Serve static files if they exist
+// ===========================================
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$filePath = __DIR__ . $uri;
+
+// Check if the requested URI corresponds to a static file
+if (file_exists($filePath) && !is_dir($filePath)) {
+    // Determine the content type based on file extension
+    $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+    $mimeTypes = [
+        'css' => 'text/css',
+        'js' => 'application/javascript',
+        'json' => 'application/json',
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'gif' => 'image/gif',
+        'svg' => 'image/svg+xml',
+        'ico' => 'image/x-icon',
+        'woff' => 'font/woff',
+        'woff2' => 'font/woff2',
+        'ttf' => 'font/ttf',
+        'eot' => 'application/vnd.ms-fontobject',
+    ];
+    
+    $contentType = $mimeTypes[$extension] ?? 'application/octet-stream';
+    
+    header("Content-Type: $contentType");
+    header("Content-Length: " . filesize($filePath));
+    readfile($filePath);
+    exit;
+}
 
 // ===========================================
 // Run Application
