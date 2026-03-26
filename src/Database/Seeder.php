@@ -24,19 +24,20 @@ class Seeder
     public function run(?string $class = null): void
     {
         $seedersPath = __DIR__ . '/../../database/seeders';
-        
+
         if ($class !== null) {
             $this->runSingleSeeder($seedersPath, $class);
+
             return;
         }
 
         $files = glob($seedersPath . '/*.php');
-        
+
         foreach ($files as $file) {
             require_once $file;
-            
+
             $className = 'Database\\Seeders\\' . basename($file, '.php');
-            
+
             if (class_exists($className)) {
                 $instance = new $className();
                 $instance->run();
@@ -53,16 +54,17 @@ class Seeder
     protected function runSingleSeeder(string $path, string $class): void
     {
         $file = $path . '/' . $class . '.php';
-        
+
         if (!file_exists($file)) {
             echo "Seeder not found: {$class}\n";
+
             return;
         }
 
         require_once $file;
-        
+
         $className = 'Database\\Seeders\\' . $class;
-        
+
         if (class_exists($className)) {
             $instance = new $className();
             $instance->run();

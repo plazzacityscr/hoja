@@ -75,6 +75,7 @@ class FileUpload
     public function validateFileType(array $file, array $allowedTypes): bool
     {
         $fileType = $file['type'];
+
         return in_array($fileType, $allowedTypes);
     }
 

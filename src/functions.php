@@ -107,3 +107,85 @@ if (!function_exists('rescue')) {
         }
     }
 }
+
+if (!function_exists('blade')) {
+    /**
+     * Return Blade instance
+     *
+     * @return \Leaf\Blade
+     */
+    function blade(): \Leaf\Blade
+    {
+        if (!(\Leaf\Config::getStatic('blade'))) {
+            $viewConfig = \Leaf\Config::get('view', []);
+            \Leaf\Config::singleton('blade', function () use ($viewConfig) {
+                return new \Leaf\Blade(
+                    $viewConfig['views_path'] ?? __DIR__ . '/../views',
+                    $viewConfig['cache_path'] ?? __DIR__ . '/../storage/cache/views'
+                );
+            });
+        }
+
+        return \Leaf\Config::get('blade');
+    }
+}
+
+if (!function_exists('view')) {
+    /**
+     * Render a Blade view
+     *
+     * @param  string  $view
+     * @param  array  $data
+     * @return string
+     */
+    function view(string $view, array $data = []): string
+    {
+        return blade()->render($view, $data);
+    }
+}
+
+if (!function_exists('asset')) {
+    /**
+     * Generate an asset path for the application.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function asset(string $path): string
+    {
+        $baseUrl = _env('APP_URL', 'http://localhost:8000');
+
+        return rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
+    }
+}
+
+if (!function_exists('url')) {
+    /**
+     * Generate a url for the application.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function url(string $path = ''): string
+    {
+        $baseUrl = _env('APP_URL', 'http://localhost:8000');
+
+        return rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
+    }
+}
+
+if (!function_exists('__')) {
+    /**
+     * Translate the given message.
+     *
+     * @param  string  $key
+     * @param  array  $replace
+     * @param  string  $locale
+     * @return string
+     */
+    function __(string $key, array $replace = [], string $locale = null): string
+    {
+        // Simple translation stub - can be expanded later
+        return $key;
+    }
+}

@@ -73,6 +73,7 @@ class ReportStorage
         }
 
         $content = file_get_contents($filepath);
+
         return json_decode($content, true);
     }
 
@@ -103,7 +104,7 @@ class ReportStorage
         }
 
         // Ordenar por fecha descendente
-        usort($reports, fn($a, $b) => strtotime($b['created_at']) - strtotime($a['created_at']));
+        usort($reports, fn ($a, $b) => strtotime($b['created_at']) - strtotime($a['created_at']));
 
         return $reports;
     }
@@ -116,6 +117,7 @@ class ReportStorage
         if (file_exists($filepath)) {
             return unlink($filepath);
         }
+
         return false;
     }
 
@@ -147,8 +149,8 @@ class ReportStorage
     {
         $markdown = "# Reporte de Análisis de Inmueble\n\n";
         $markdown .= "**ID del Proyecto**: {$projectId}\n";
-        $markdown .= "**Fecha de Generación**: " . date('Y-m-d H:i:s') . "\n";
-        $markdown .= "**Total de Pasos**: " . count($analysisResults) . "\n\n";
+        $markdown .= '**Fecha de Generación**: ' . date('Y-m-d H:i:s') . "\n";
+        $markdown .= '**Total de Pasos**: ' . count($analysisResults) . "\n\n";
         $markdown .= "---\n\n";
 
         foreach ($analysisResults as $step) {

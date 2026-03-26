@@ -21,7 +21,7 @@ if (!function_exists('db')) {
     {
         $config = config('database');
         $connection = $connection ?? $config['default'];
-        
+
         return new Db($config['connections'][$connection]);
     }
 }
@@ -36,6 +36,7 @@ if (!function_exists('database_path')) {
     function database_path(string $path = ''): string
     {
         $base = __DIR__ . '/../storage/database';
+
         return $path ? $base . '/' . $path : $base;
     }
 }
@@ -50,6 +51,7 @@ if (!function_exists('storage_path')) {
     function storage_path(string $path = ''): string
     {
         $base = __DIR__ . '/../storage';
+
         return $path ? $base . '/' . $path : $base;
     }
 }
@@ -65,10 +67,10 @@ if (!function_exists('config')) {
     function config(string $key, $default = null)
     {
         static $configs = [];
-        
+
         $parts = explode('.', $key);
         $file = $parts[0];
-        
+
         if (!isset($configs[$file])) {
             $configFile = __DIR__ . '/../config/' . $file . '.php';
             if (file_exists($configFile)) {
@@ -77,7 +79,7 @@ if (!function_exists('config')) {
                 return $default;
             }
         }
-        
+
         $value = $configs[$file];
         for ($i = 1; $i < count($parts); $i++) {
             if (isset($value[$parts[$i]])) {
@@ -86,7 +88,7 @@ if (!function_exists('config')) {
                 return $default;
             }
         }
-        
+
         return $value;
     }
 }

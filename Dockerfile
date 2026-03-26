@@ -1,6 +1,7 @@
 # ===========================================
 # Leaf PHP - Production Dockerfile
 # Optimized for Railway and production deployment
+# Updated: Added Redis extension for session and cache storage
 # ===========================================
 
 # Stage 1: Build dependencies
@@ -46,7 +47,8 @@ RUN docker-php-ext-install \
     pcntl \
     bcmath \
     zip \
-    opcache
+    opcache \
+    redis
 
 # Configure OPcache for production
 RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \

@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| total_agentes | 11 |
+| total_agentes | 12 |
 | fecha_actualizacion | 2026-03-25 |
 
 ## Agentes
@@ -22,6 +22,7 @@
 | Ejecutores - Core | agt-core-request-response | `.claude/agents/ejecutores/agt-core-request-response.md` | ejecutor | Diseñar y validar patrones de request/response HTTP, formatos de respuesta, headers y configuración CORS para asegurar coherencia con R6 y R7. | activo |
 | Ejecutores - Core | agt-core-config-deployment | `.claude/agents/ejecutores/agt-core-config-deployment.md` | ejecutor | Diseñar y validar configuración, variables de entorno, despliegue en Railway, manejo de errores, DI, Docker, testing y linting para asegurar coherencia con R2, R3, R8, R8.b, R10, R11. | activo |
 | Ejecutores - Core | agt-railway-deploy-agent | `.claude/agents/ejecutores/agt-railway-deploy-agent.md` | ejecutor | Validar, preparar y ejecutar despliegues a Railway conforme a la gobernanza del proyecto, sin inventar configuración ni asumir capacidades no documentadas. | activo |
+| Ejecutores - Core | agt-leaf-test-runner | `.claude/agents/ejecutores/agt-leaf-test-runner.md` | ejecutor | Ejecutar tests y checks reales del proyecto Leaf cuando sea invocado, validando calidad y preparación básica. | activo |
 
 ## Notas
 

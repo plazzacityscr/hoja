@@ -43,7 +43,7 @@ class Migrator
     public function run(string $direction = 'up', ?string $step = null): void
     {
         $migrations = $this->getPendingMigrations();
-        
+
         if ($direction === 'down') {
             $migrations = array_reverse($migrations);
         }
@@ -69,7 +69,7 @@ class Migrator
     protected function getPendingMigrations(): array
     {
         $files = glob($this->migrationsPath . '/*.php');
-        
+
         if (empty($files)) {
             return [];
         }
@@ -85,6 +85,7 @@ class Migrator
         }
 
         sort($pending);
+
         return $pending;
     }
 
@@ -94,6 +95,7 @@ class Migrator
     protected function getRanMigrations(): array
     {
         $result = $this->db->query("SELECT migration FROM {$this->table} ORDER BY id");
+
         return array_column($result, 'migration');
     }
 
@@ -103,6 +105,7 @@ class Migrator
     protected function getNextBatchNumber(): int
     {
         $result = $this->db->query("SELECT MAX(batch) as batch FROM {$this->table}");
+
         return ($result[0]['batch'] ?? 0) + 1;
     }
 
@@ -112,23 +115,25 @@ class Migrator
     protected function runMigration(string $migration, string $direction): void
     {
         $file = $this->migrationsPath . '/' . $migration . '.php';
-        
+
         if (!file_exists($file)) {
             echo "Migration file not found: {$migration}\n";
+
             return;
         }
 
         require_once $file;
-        
+
         $className = $this->getClassName($migration);
-        
+
         if (!class_exists($className)) {
             echo "Migration class not found: {$className}\n";
+
             return;
         }
 
         $instance = new $className();
-        
+
         try {
             if ($direction === 'up') {
                 $instance->up();
@@ -141,6 +146,7 @@ class Migrator
             }
         } catch (\Exception $e) {
             echo "✗ Error: {$e->getMessage()}\n";
+
             throw $e;
         }
     }
@@ -152,6 +158,7 @@ class Migrator
     {
         $parts = explode('_', $migration);
         $className = implode('_', array_slice($parts, 4));
+
         return 'Database\\Migrations\\' . $className;
     }
 
