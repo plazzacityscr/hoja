@@ -1,0 +1,70 @@
+{
+    "name": "leafs/leaf",
+    "description": "Elegant PHP for modern developers",
+    "keywords": [
+        "microframework",
+        "rest",
+        "router",
+        "leaf",
+        "php",
+        "framework"
+    ],
+    "homepage": "https://leafphp.dev",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Darko",
+            "email": "mickdd22@gmail.com",
+            "homepage": "https://mychi.netlify.app",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Leaf\\": "src",
+            "App\\": "app",
+            "Database\\": "database"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.4|^8.0",
+        "leafs/http": "*",
+        "leafs/anchor": "*",
+        "leafs/exception": "*",
+        "leafs/db": "^4.0",
+        "leafs/blade": "^4.1",
+        "phpoption/phpoption": "^1.9",
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "scripts": {
+        "test": "./vendor/bin/alchemy setup --test",
+        "alchemy": "./vendor/bin/alchemy setup",
+        "lint": "./vendor/bin/alchemy setup --lint",
+        "actions": "./vendor/bin/alchemy setup --actions",
+        "db:migrate": "php db.php migrate",
+        "db:seed": "php db.php seed",
+        "db:fresh": "php db.php fresh:seed",
+        "serve": "php -S localhost:8000 -t public",
+        "setup": [
+            "cp .env.example .env",
+            "php db.php migrate",
+            "php db.php seed"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "pestphp/pest": "*",
+        "leafs/alchemy": "^4.0"
+    }
+}

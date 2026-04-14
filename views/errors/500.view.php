@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Internal Server Error</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 6rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        p {
+            font-size: 1.5rem;
+            opacity: 0.9;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>500</h1>
+        <p>Internal Server Error</p>
+        <?php if (isset($exception) && _env('APP_DEBUG', false)): ?>
+        <pre style="text-align: left; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; overflow: auto; max-width: 600px; margin: 1rem auto;">
+<?= htmlspecialchars($exception->getMessage()) ?>
+File: <?= htmlspecialchars($exception->getFile()) ?>:<?= $exception->getLine() ?>
+        </pre>
+        <?php endif; ?>
+        <a href="/" class="back-link">Go Home</a>
+    </div>
+</body>
+</html>
