@@ -148,15 +148,11 @@ if (_env('APP_ENV', 'development') === 'production' && !_env('APP_DEBUG', false)
 // ===========================================
 // Load Routes
 // ===========================================
-$routeDir = __DIR__ . '/../routes';
-if (is_dir($routeDir)) {
-    foreach (glob($routeDir . '/*.php') as $routeFile) {
-        require $routeFile;
-    }
-}
+// Note: routes/web.php is temporarily disabled due to routing issues
+// All routes are defined inline to ensure proper execution order
 
 // ===========================================
-// Application Routes (Inline examples)
+// Application Routes
 // ===========================================
 
 // Health check endpoint (for Railway and monitoring)
@@ -166,6 +162,16 @@ app()->get('/health', function () {
         'timestamp' => date('c'),
         'environment' => _env('APP_ENV', 'development'),
     ]);
+});
+
+// Home page route (alternative to /)
+app()->get('/home', function () {
+    echo "Home route is working";
+});
+
+// Dashboard route
+app()->get('/dashboard', function () {
+    echo "Dashboard route is working";
 });
 
 // 404 Handler

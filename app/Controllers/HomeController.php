@@ -28,7 +28,9 @@ class HomeController
      */
     public function showView()
     {
-        response()->view('index', [
+        // Diagnostic: try to return JSON first
+        return response()->json([
+            'message' => 'Dashboard route is working',
             'title' => 'Home - Leaf PHP',
         ]);
     }
